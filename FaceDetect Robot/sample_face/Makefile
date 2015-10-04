@@ -1,0 +1,34 @@
+CC = g++
+CFLAGS = -pedantic -Wall -std=c++11 -O3
+LIBS = -larmadillo \
+	-lopencv_core \
+	-lopencv_imgproc \
+	-lopencv_highgui \
+	-lopencv_features2d \
+	-lopencv_objdetect \
+	-lopencv_contrib
+
+OBJECTS = coffeebot.o xboxctrl.o serial.o baserobot.o facedetect.o
+
+all: $(OBJECTS) agent
+
+serial.o: serial.c
+	gcc -pedantic -Wall -Werror -std=gnu99 -O3 -c $< -o $@
+
+facedetect.o: facedetect.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+coffeebot.o: coffeebot.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+baserobot.o: baserobot.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+xboxctrl.o: xboxctrl.c
+	gcc -pedantic -Wall -Werror -std=gnu99 -O3 -c $< -o $@
+
+agent: $(OBJECTS)
+	$(CC) $(CFLAGS) -pthread -o $@ $^ $(LIBS)
+
+clean:
+	rm -f $(OBJECTS) agent
